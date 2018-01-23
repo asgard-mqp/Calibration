@@ -1,0 +1,3 @@
+[submodule "averaging_quaternions"]
+	path = averaging_quaternions
+	url = https://github.com/tolgabirdal/averaging_quaternions.git
