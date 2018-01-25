@@ -21,7 +21,7 @@ end
 
 [imagePoints,boardSize] = detectCheckerboardPoints(left);
 
-squareSize = 29; % millimeters
+squareSize = 26; % millimeters
 worldPoints = generateCheckerboardPoints(boardSize,squareSize);
 
 I = imread(char(left(1)));
@@ -64,11 +64,14 @@ for img = 1:6
     vectors=[vectors,vect];
     quats = [quats;rotm2quat(transpose(rot))];
 end
-mean(vectors,2)
+dist = mean(vectors,2)
 avg_quaternion_markley(quats)
 
 rot = quat2rotm(transpose(avg_quaternion_markley(quats)))
-LeftReal = [[transpose(rot),mean(vectors,2)];[0,0,0,1]]
+
+midPoint = dist/2
+
+LeftReal = [[transpose(rot),dist];[0,0,0,1]]
 RightReal = eye(4)
 
 
