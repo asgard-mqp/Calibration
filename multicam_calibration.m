@@ -40,11 +40,6 @@ leftRot = cameraParamsLeft.RotationMatrices(:,:,shared);
 rightTrans = cameraParamsRight.TranslationVectors(shared,:);
 leftTrans = cameraParamsLeft.TranslationVectors(shared,:);
 
-
-rotm2eul(rightRot);
-rotm2eul(leftRot);
-%decide what transforms to treat as true
-
 rots = [];
 quats = [];
 vectors = [];
@@ -64,15 +59,39 @@ for img = 1:6
     vectors=[vectors,vect];
     quats = [quats;rotm2quat(transpose(rot))];
 end
-dist = mean(vectors,2)
+averageDist = mean(vectors,2)
 avg_quaternion_markley(quats)
 
 rot = quat2rotm(transpose(avg_quaternion_markley(quats)))
 
-midPoint = dist/2
+midPoint = averageDist/2
 
-LeftReal = [[transpose(rot),dist];[0,0,0,1]]
-RightReal = eye(4)
+flat = [2,3,4,5]
+
+
+Zunit = round(-1*rot(:,3),4);
+
+tempYunit = averageDist/norm(averageDist);
+
+Y = tempYunit - Zunit*dot(tempYunit,Zunit);
+Yunit = round(Y/norm(Y),4);
+Xunit = round(cross(Yunit,Zunit),4)
+
+
+quiver3(0, 0, 0, ...
+        1, 0, 0,100);
+hold on;
+quiver3(0, 0, 0, ...
+        0, 1, 0,100);
+hold on;
+quiver3(0, 0, 0, ...
+        0, 0, 1,100);
+hold on;
+
+center_to_right = [[Xunit,Yunit,Zunit,midPoint];[0,0,0,1]];
+
+LeftReal = center_to_right * [[transpose(rot),averageDist];[0,0,0,1]]
+RightReal = center_to_right * eye(4)
 
 
 
